@@ -8,17 +8,47 @@ const dropdown = document.querySelector(".input-tags-container .dropdown-menu");
 
 const badgeContainer = document.querySelector('.badged-container');
 
+const resultsContainer = document.getElementById("results");
+
 input.addEventListener('focus', function(){
-    dropdown.style.display="block";
+
+    resultsContainer.innerHTML = '';
+
+    if(selectedContainer.innerHTML!=''){
+
+        dropdown.style.display="block";
+
+        selectedContainer.classList.add('only-results');
+
+        if(selectedContainer.classList.contains('d-none')) selectedContainer.classList.remove('d-none');
+    }
+
 });
 
 input.addEventListener('keyup', async function(e){
-    e.stopPropagation();
-    
-    const resultsContainer = document.getElementById("results");
 
+    e.stopPropagation();
+        
     try {
+
         let buscar = this.value;
+
+        if(buscar == ''){
+            
+            resultsContainer.innerHTML = ''; 
+
+            if(selectedContainer.innerHTML == ''){
+
+                dropdown.style.display="none";
+            }
+            else
+            {
+                selectedContainer.classList.add('only-results');
+            }
+
+            return false;    
+
+        }
 
         const response = await fetch(`${ruta}${buscar}`);
 
@@ -28,7 +58,20 @@ input.addEventListener('keyup', async function(e){
         
         const results = records.map(({recordid, fields:{ nombdep, nombdist, nombprov }})=>({ id:recordid, nombdep, nombdist, nombprov, nomcompleto : `${nombdep}, ${nombprov}, ${nombdist}`  }));
         
-        resultsContainer.innerHTML = '';
+        resultsContainer.innerHTML = '';                
+
+        if(selectedContainer.innerHTML==''){            
+    
+            selectedContainer.classList.add('d-none');
+        }
+        else
+        {
+            if(selectedContainer.classList.contains('d-none')){
+                selectedContainer.classList.remove('d-none');                
+            }            
+        }
+
+        selectedContainer.classList.remove('only-results');
         
         results.map(({id, nombdep, nombdist, nombprov, nomcompleto}, i)=>{
 
@@ -70,6 +113,8 @@ input.addEventListener('keyup', async function(e){
                 };
             
                 printSaveRecords(object_save);
+                
+                input.value = '';
             });
 
         });
@@ -196,6 +241,6 @@ document.addEventListener('click', function(event){
 
 badgeContainer.addEventListener('click', function(){
    
-    dropdown.style.display = "block";
+    // dropdown.style.display = "block";
 
 });

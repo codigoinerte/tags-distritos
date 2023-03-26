@@ -34,6 +34,19 @@
                 type: 'fetch',        
                 icon: 'bi-search',
                 id:'distritos',
+                filtro:(data)=>{
+
+                    const records = data.records;
+                        
+                    return records.map(({recordid, fields:{ nombdep, nombdist, nombprov }})=>
+                        ({ id:recordid, 
+                           nombdep, 
+                           nombdist, 
+                           nombprov, 
+                           nomcompleto : `${nombdep}, ${nombprov}, ${nombdist}`  })
+                    );
+                                        
+                },
                 ruta: 'https://bogota-laburbano.opendatasoft.com/api/records/1.0/search/?dataset=distritos-peru&facet=nombdep&facet=nombprov&q='
             });
 

@@ -9,13 +9,20 @@
 
             ruta: '',
 
-            icon: ''
+            icon: '',
+            
+            filtro: null
 
         }, options);
                 
         $(this).each(function(i, element){
             
             if(settings.type == 'fetch' && settings.ruta !=''){
+
+                if(settings.filtro == null){
+                    console.warn('Definir filtro de fetch en las propiedades de inicializacion, filtro: function(data){ return data; }');
+                    return false;
+                }
 
                 this.classList.add('padding-rigth')
     
@@ -137,10 +144,12 @@
         
                         const data = await response.json();
                         
-                        const records = data.records;
+                        /** estandarizacion de consulta */
+
+                        const results = settings.filtro(data);
                         
-                        const results = records.map(({recordid, fields:{ nombdep, nombdist, nombprov }})=>({ id:recordid, nombdep, nombdist, nombprov, nomcompleto : `${nombdep}, ${nombprov}, ${nombdist}`  }));
-                        
+                        /** estandarizacion de consulta */
+
                         resultsContainer.innerHTML = '';                
         
                         if(selectedContainer.innerHTML==''){            
@@ -316,6 +325,8 @@
                         dropdown.style.display = "none";        
                     }
                 });
+            }else {
+                // Agregar otros tipos
             }
 
         });      
